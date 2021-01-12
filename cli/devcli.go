@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	actions "github.com/ma-he-sh/postman-api-hack/cli/actions"
 	"os"
 )
 
@@ -18,7 +19,7 @@ func main() {
 	switch os.Args[1] {
 	case "help":
 		cmdHelp.Parse(os.Args[2:])
-		fmt.Println(" section:", *cmdHelpSection)
+		actions.ShowHelp(*cmdHelpSection)
 	default:
 		fmt.Println("Command not found")
 		os.Exit(1)
