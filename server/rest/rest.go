@@ -7,7 +7,7 @@ import (
 
 func RestRoutes(routes *mux.Router) {
 	routes.HandleFunc("/api/status", restStatus).Methods("GET", "POST")
-	routes.HandleFunc("/api/fetch", restFetch).Methods("GET")
+	routes.HandleFunc("/api/fetch", restFetch).Methods("POST")
 	routes.HandleFunc("/api/list", restList).Methods("GET")
 	routes.HandleFunc("/api/version", restVersion).Methods("GET")
 }
@@ -33,9 +33,10 @@ func restFetch(w http.ResponseWriter, r *http.Request) {
 
 // get a list of code list :: for autocomplete cli
 func restList(w http.ResponseWriter, r *http.Request) {
+	list := GetListOfLang()
 	payload := map[string]interface{}{
-		"codes": []string{},
-		"hash":  "",
+		"codes": list.Codes,
+		"hash":  list.Hash,
 	}
 	APIPayload(w, payload, "rest_list", false)
 	return

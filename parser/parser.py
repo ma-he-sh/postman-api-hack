@@ -14,7 +14,7 @@ def iterate( dir ):
     jsondata = {
         'stamp': str( datetime.now() ),
         'hash'   : get_hash(),
-        'lang' : {}
+        'lang' : []
     }
 
     for path, subdirs, files in os.walk( dir ):
@@ -27,11 +27,11 @@ def iterate( dir ):
                 _file = open( fpath, 'r' )
                 content = _file.read()
 
-                jsondata['lang'][langcode] = {
+                jsondata['lang'].append({
                     'fname' : langname,
                     'code'  : langcode,
                     'content': content,
-                }
+                })
 
     return jsondata
 

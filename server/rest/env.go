@@ -20,3 +20,11 @@ func RESTVersion() string {
 func RESTServerName() string {
 	return os.Getenv("APP_NAME")
 }
+
+func RESTDataPath() string {
+	return os.Getenv("APP_DATA_PATH")
+}
+
+func RESTDataFileName() string {
+	return os.Getenv("APP_DATA_FILENAME")
+}
