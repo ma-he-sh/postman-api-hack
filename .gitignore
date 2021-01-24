@@ -17,3 +17,6 @@
 .env
 !.example.env
 
+# ignore venv
+venv
+*.json
