@@ -5,7 +5,7 @@ from datetime import datetime
 
 search_dir = '/home/ma-he-sh/Documents/dev/gitignore'
 searchstr  = 'gitignore'
-savefile   = './data.json'
+savefile   = '/home/ma-he-sh/Documents/dev/postman-api-hack/server/payload/data.json'
 
 def get_hash():
     return str( uuid.uuid4() )

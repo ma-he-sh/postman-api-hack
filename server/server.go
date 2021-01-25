@@ -17,8 +17,8 @@ func main() {
 	mainRouter := r.Host("localhost").Subrouter()
 	rest.RestRoutes(mainRouter)
 
-	fs := http.FileServer(http.Dir("./public"))
-	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fs))
+	fs := http.FileServer(http.Dir("./payload"))
+	r.PathPrefix("/payload/").Handler(http.StripPrefix("/payload/", fs))
 
 	cors := handlers.CORS(
 		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type"}),

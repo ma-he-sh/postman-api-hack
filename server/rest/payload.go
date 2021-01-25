@@ -24,6 +24,10 @@ type ListOfCodes struct {
 	Codes []map[string]interface{}
 }
 
+type RequestCodes struct {
+	Codes []string `json:"codes"`
+}
+
 // check file exists
 func fileExists(filePath string) bool {
 	info, err := os.Stat(filePath)
@@ -77,4 +81,30 @@ func GetListOfLang() ListOfCodes {
 	}
 
 	return langList
+}
+
+// get stamp and hash
+func GetRestVersion() map[string]interface{} {
+	payload := GetPayload()
+
+	return map[string]interface{}{
+		"stamp": payload.Stamp,
+		"hash":  payload.Hash,
+	}
+}
+
+// get content
+func GetByCodes(reqCodes RequestCodes) []Codes {
+	var codes []Codes
+	payload := GetPayload()
+
+	for i := 0; i < len(payload.Languages); i++ {
+		for _, codeEl := range reqCodes.Codes {
+			if codeEl == payload.Languages[i].Code {
+				codes = append(codes, payload.Languages[i])
+			}
+		}
+	}
+
+	return codes
 }

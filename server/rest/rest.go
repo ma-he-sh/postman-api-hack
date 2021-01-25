@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -23,11 +24,17 @@ func restStatus(w http.ResponseWriter, r *http.Request) {
 
 // get payload
 func restFetch(w http.ResponseWriter, r *http.Request) {
-	payload := map[string]interface{}{
-		"codes": []string{},
-		"hash":  "",
+	var codes RequestCodes
+	err := json.NewDecoder(r.Body).Decode(&codes)
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
 	}
-	APIPayload(w, payload, "rest_fetch", false)
+
+	reqCodes := GetByCodes(codes)
+
+	APIPayload(w, reqCodes, "rest_fetch", false)
 	return
 }
 
@@ -44,10 +51,7 @@ func restList(w http.ResponseWriter, r *http.Request) {
 
 // get version of payload :: for update
 func restVersion(w http.ResponseWriter, r *http.Request) {
-	payload := map[string]interface{}{
-		"stamp": "",
-		"hash":  "",
-	}
-	APIPayload(w, payload, "rest_version", false)
+	version := GetRestVersion()
+	APIPayload(w, version, "rest_version", false)
 	return
 }
