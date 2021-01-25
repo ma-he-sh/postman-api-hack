@@ -63,13 +63,30 @@ type VersionPayload struct {
 }
 
 type FetchPayload struct {
-	Data    CodeData `json:"data"`
-	Resp    string   `json:"resp"`
-	Server  string   `json:"server"`
-	Type    string   `json:"type"`
-	Version string   `json:"version"`
+	Data    []CodeData `json:"data"`
+	Resp    string     `json:"resp"`
+	Server  string     `json:"server"`
+	Type    string     `json:"type"`
+	Version string     `json:"version"`
 }
 
+// get current dir
+func GetCurrDir() string {
+	path, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	return path
+}
+
+func FileExists(file string) bool {
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+// get host
 func getHost() string {
 	usr, err := user.Current()
 	if err != nil {
@@ -150,8 +167,6 @@ func RequestCodes(codes []string) FetchPayload {
 		"codes": codes,
 	})
 
-	log.Println(requestBody)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -163,8 +178,6 @@ func RequestCodes(codes []string) FetchPayload {
 	}
 
 	defer resp.Body.Close()
-
-	log.Println(resp.Body)
 
 	var result FetchPayload
 

@@ -2,8 +2,12 @@ package actions
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"strings"
 )
+
+var ignoreFileName = ".gitignore"
 
 // help section
 func ShowHelp() {
@@ -56,33 +60,129 @@ func listAction() {
 	}
 }
 
+// get file content as bytes
+func getFileContent(result []CodeData) string {
+	content := ""
+	for _, code := range result {
+		content += code.Content
+	}
+	return content
+}
+
+// replace | create file
+func replaceFile(fileDir string, result []CodeData) {
+	fileName := fileDir + ignoreFileName
+	contentData := getFileContent(result)
+
+	f, err := os.Create(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	_, err2 := f.WriteString(contentData)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	os.Exit(0)
+}
+
+// append to file
+func appendFile(fileDir string, result []CodeData) {
+	fileName := fileDir + ignoreFileName
+	contentData := getFileContent(result)
+
+	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	_, err2 := f.WriteString(contentData)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	os.Exit(0)
+}
+
+// Clear File
+func clearFile(fileDir string) {
+	fileName := fileDir + ignoreFileName
+
+	f, err := os.OpenFile(fileName, os.O_RDWR, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	_, err2 := f.WriteString("")
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	os.Exit(0)
+}
+
 // Insert Content
-func insertAction(code string) {
+func insertAppendAction(action string, code string) {
+	currDir := GetCurrDir()
 	codes := strings.Split(strings.TrimSpace(code), ",")
 	if len(codes) > 0 {
 		result := RequestCodes(codes)
-		fmt.Println(result)
-	} else {
-		fmt.Println(">> Please define --code []")
+		if result.Type == "success" {
+			if len(result.Data) > 0 {
+				fileDir := currDir + "/"
+
+				if action == "insert" {
+					// replace current content
+					replaceFile(fileDir, result.Data)
+				} else if action == "append" {
+					// append current content
+					if FileExists(fileDir) {
+						appendFile(fileDir, result.Data)
+					} else {
+						replaceFile(fileDir, result.Data)
+					}
+				}
+			} else {
+				fmt.Println(">> No result returned, request codes are case sensitive")
+			}
+		}
 	}
+	fmt.Println(">> Please define --code []")
+}
+
+// Clear Action
+func clearAction() {
+	currDir := GetCurrDir() + "/"
+	clearFile(currDir)
+	fmt.Println(">> Cleared File")
 }
 
 // actions
 func GitActions(action string, code string) {
-	fmt.Println("actions", action, code)
 	switch {
 	case action == "insert":
 		if len(code) > 0 {
-			insertAction(code)
+			insertAppendAction(action, code)
 		} else {
 			fmt.Println(">> Please define --code []")
 		}
 		break
 	case action == "append":
-		fmt.Println("append")
+		if len(code) > 0 {
+			insertAppendAction(action, code)
+		} else {
+			fmt.Println(">> Please define --code []")
+		}
 		break
 	case action == "clear":
-		fmt.Println("clear")
+		clearAction()
 		break
 	case action == "list":
 		listAction()
