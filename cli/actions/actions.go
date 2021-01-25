@@ -86,6 +86,7 @@ func replaceFile(fileDir string, result []CodeData) {
 		log.Fatal(err2)
 	}
 
+	fmt.Println(">> Create file:" + fileName)
 	os.Exit(0)
 }
 
@@ -106,6 +107,7 @@ func appendFile(fileDir string, result []CodeData) {
 		log.Fatal(err2)
 	}
 
+	fmt.Println(">> Appended to file:" + fileName)
 	os.Exit(0)
 }
 
@@ -113,18 +115,14 @@ func appendFile(fileDir string, result []CodeData) {
 func clearFile(fileDir string) {
 	fileName := fileDir + ignoreFileName
 
-	f, err := os.OpenFile(fileName, os.O_RDWR, 0644)
+	f, err := os.OpenFile(fileName, os.O_TRUNC, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer f.Close()
 
-	_, err2 := f.WriteString("")
-	if err2 != nil {
-		log.Fatal(err2)
-	}
-
+	fmt.Println(">> Cleared File:" + fileName)
 	os.Exit(0)
 }
 
@@ -160,6 +158,8 @@ func insertAppendAction(action string, code string) {
 // Clear Action
 func clearAction() {
 	currDir := GetCurrDir() + "/"
+
+	fmt.Println(currDir)
 	clearFile(currDir)
 	fmt.Println(">> Cleared File")
 }
